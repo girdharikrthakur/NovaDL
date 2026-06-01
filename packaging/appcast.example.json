@@ -1,0 +1,21 @@
+{
+  "name": "NovaDL",
+  "channel": "stable",
+  "mandatory": false,
+  "version": "0.1.0",
+  "notes": "Initial architecture preview.",
+  "artifacts": [
+    {
+      "type": "installer",
+      "platform": "windows-x64",
+      "url": "https://github.com/your-org/novadl/releases/download/v0.1.0/NovaDL-Setup.exe",
+      "sha256": "REPLACE_WITH_RELEASE_SHA256"
+    },
+    {
+      "type": "portable",
+      "platform": "windows-x64",
+      "url": "https://github.com/your-org/novadl/releases/download/v0.1.0/NovaDL-Portable.zip",
+      "sha256": "REPLACE_WITH_RELEASE_SHA256"
+    }
+  ]
+}
