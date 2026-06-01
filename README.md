@@ -27,17 +27,6 @@ NovaDL is in early desktop-app development. The Windows build, UI shell, bundled
 
 Suggested GitHub screenshot locations:
 
-```text
-docs/screenshots/dashboard.png
-docs/screenshots/downloads.png
-docs/screenshots/library.png
-docs/screenshots/settings.png
-```
-
-Add screenshots there and reference them like this:
-
-```md
-![Dashboard](docs/screenshots/dashboard.png)
 ```
 
 ## Tech Stack
@@ -334,7 +323,7 @@ For changes that touch packaging or dependencies, also run:
 
 ## License
 
-Add your chosen license before publishing publicly. Common options are MIT, Apache-2.0, and GPL-3.0. Note that bundled dependency licensing should be reviewed before commercial distribution, especially the selected ffmpeg build.
+Whatever you like to do
 
 ## Credits
 
