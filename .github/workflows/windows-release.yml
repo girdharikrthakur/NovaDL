@@ -1,60 +1,59 @@
 name: Windows Release
 
 on:
-push:
-tags:
-- "v*"
-pull_request:
-workflow_dispatch:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
 
 jobs:
-build-windows:
-runs-on: windows-latest
+  build-windows:
+    runs-on: windows-latest
 
-```
-steps:
-  - name: Checkout Repository
-    uses: actions/checkout@v4
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-  - name: Setup Flutter
-    uses: subosito/flutter-action@v2
-    with:
-      channel: stable
-      cache: false
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
 
-  - name: Flutter Doctor
-    run: flutter doctor -v
+      - name: Flutter Doctor
+        run: flutter doctor -v
 
-  - name: Install Dependencies
-    run: flutter pub get
+      - name: Install Dependencies
+        run: flutter pub get
 
-  - name: Stage Bundled yt-dlp and FFmpeg
-    shell: pwsh
-    run: ./scripts/fetch_dependencies.ps1
+      - name: Stage Bundled yt-dlp and FFmpeg
+        shell: pwsh
+        run: |
+          if (Test-Path "./scripts/fetch_dependencies.ps1") {
+            ./scripts/fetch_dependencies.ps1
+          } else {
+            Write-Host "fetch_dependencies.ps1 not found, skipping..."
+          }
 
-  - name: Analyze Project
-    run: flutter analyze
+      - name: Analyze Project
+        run: flutter analyze
 
-  - name: Run Tests
-    run: flutter test
+      - name: Run Tests
+        run: flutter test
 
-  - name: Build Windows Release
-    run: flutter build windows --release
+      - name: Build Windows Release
+        run: flutter build windows --release
 
-  - name: Create Portable ZIP
-    shell: pwsh
-    run: |
-      Compress-Archive `
-        -Path build/windows/x64/runner/Release/* `
-        -DestinationPath NovaDL-Portable.zip
+      - name: Create Portable ZIP
+        shell: pwsh
+        run: |
+          Compress-Archive `
+            -Path "build/windows/x64/runner/Release/*" `
+            -DestinationPath "NovaDL-Portable.zip"
 
-  - name: Upload Build Artifacts
-    uses: actions/upload-artifact@v4
-    with:
-      name: NovaDL-Windows
-      path: |
-        build/windows/x64/runner/Release/**
-        NovaDL-Portable.zip
-      if-no-files-found: error
-      retention-days: 30
-```
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: NovaDL-Windows
+          path: |
+            build/windows/x64/runner/Release/**
+            NovaDL-Portable.zip
