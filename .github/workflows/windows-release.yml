@@ -1,44 +1,60 @@
 name: Windows Release
 
 on:
-  push:
-    tags:
-      - "v*"
-  pull_request:
-  workflow_dispatch:
+push:
+tags:
+- "v*"
+pull_request:
+workflow_dispatch:
 
 jobs:
-  build-windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          cache: true
-      - name: Dependencies
-        working-directory: novadl
-        run: flutter pub get
-      - name: Stage bundled yt-dlp and ffmpeg
-        working-directory: novadl
-        shell: pwsh
-        run: ./scripts/fetch_dependencies.ps1
-      - name: Analyze
-        working-directory: novadl
-        run: flutter analyze
-      - name: Test
-        working-directory: novadl
-        run: flutter test
-      - name: Build Windows
-        working-directory: novadl
-        run: flutter build windows --release
-      - name: Portable artifact
-        shell: pwsh
-        working-directory: novadl
-        run: Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath NovaDL-Portable.zip
-      - uses: actions/upload-artifact@v4
-        with:
-          name: NovaDL-Windows
-          path: |
-            novadl/build/windows/x64/runner/Release/**
-            novadl/NovaDL-Portable.zip
+build-windows:
+runs-on: windows-latest
+
+```
+steps:
+  - name: Checkout Repository
+    uses: actions/checkout@v4
+
+  - name: Setup Flutter
+    uses: subosito/flutter-action@v2
+    with:
+      channel: stable
+      cache: false
+
+  - name: Flutter Doctor
+    run: flutter doctor -v
+
+  - name: Install Dependencies
+    run: flutter pub get
+
+  - name: Stage Bundled yt-dlp and FFmpeg
+    shell: pwsh
+    run: ./scripts/fetch_dependencies.ps1
+
+  - name: Analyze Project
+    run: flutter analyze
+
+  - name: Run Tests
+    run: flutter test
+
+  - name: Build Windows Release
+    run: flutter build windows --release
+
+  - name: Create Portable ZIP
+    shell: pwsh
+    run: |
+      Compress-Archive `
+        -Path build/windows/x64/runner/Release/* `
+        -DestinationPath NovaDL-Portable.zip
+
+  - name: Upload Build Artifacts
+    uses: actions/upload-artifact@v4
+    with:
+      name: NovaDL-Windows
+      path: |
+        build/windows/x64/runner/Release/**
+        NovaDL-Portable.zip
+      if-no-files-found: error
+      retention-days: 30
+```
